@@ -1,4 +1,4 @@
-package com.example.login_stateful
+package com.example.login_bloc
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
