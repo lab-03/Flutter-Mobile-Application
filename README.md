@@ -16,3 +16,11 @@ samples, guidance on mobile development, and a full API reference.
 
 
 ## Screenshots From The App(v1)
+# Login Screen
+![](screenshots/loginScreen.png)
+
+# Home Screen
+![](screenshots/HomeScreen.png)
+
+# QRCode Screen
+![](screenshots/QR-codeScreen.png)
