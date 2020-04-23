@@ -65,8 +65,8 @@ class _ScanQrScreenState extends State<ScanQrScreen> with TickerProviderStateMix
               width: 250,
               height: 250,
               child: QRCaptureView(
-              controller: _captureController,
-            ),
+                controller: _captureController,
+              ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 56),
