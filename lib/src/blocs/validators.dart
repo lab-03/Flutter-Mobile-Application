@@ -1,10 +1,31 @@
 import 'dart:async';
 
 class Validators {
+  final validateName = StreamTransformer<String, String>.fromHandlers(
+    handleData: (name, sink) {
+      RegExp exp = new RegExp(r"^[a-zA-Z.+'-]+(?: [a-zA-Z.+'-]+){2,} ?$"); //r"^[a-zA-Z0-9._%+-]+@stud\.fci-cu\.edu\.eg$"
+      if (exp.hasMatch(name)) {
+        sink.add(name);
+      } else {
+        sink.addError("Please enter at least 3 names !!!");
+      }
+    }
+  );
+
+  final validateImage = StreamTransformer<String, String>.fromHandlers(
+    handleData: (image, sink) {
+      if (image == "Done") {
+        sink.add(image);
+      } else {
+        sink.addError("Please enter at least 3 images !!!");
+      }
+    }
+  );
 
   final validateEmail = StreamTransformer<String, String>.fromHandlers(
     handleData: (email, sink) {
-      RegExp exp = new RegExp(r"^[a-zA-Z0-9._%+-]+@stud\.fci-cu\.edu\.eg$");
+      RegExp exp = new RegExp(r"^[a-zA-Z0-9._%+-]+"); //r"^[a-zA-Z0-9._%+-]+@stud\.fci-cu\.edu\.eg$"
+      //r"^[a-zA-Z0-9._%+-]+"
       if (exp.hasMatch(email)) {
         sink.add(email);
       } else {

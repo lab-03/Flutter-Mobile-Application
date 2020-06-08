@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:login_bloc/src/blocs/login_bloc.dart';
-// import '../blocs/bloc.dart';
+import '../../blocs/bloc.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginBloc bloc = LoginBloc();
-  
+class LoginPage extends StatelessWidget {
+
   @override
-  Widget build(BuildContext context) {  
+  Widget build(BuildContext context) {
+    
     return new Scaffold(
       backgroundColor: Colors.white,
       body: new Stack(fit: StackFit.expand, children: <Widget>[
@@ -39,20 +38,19 @@ class LoginScreen extends StatelessWidget {
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      loadingIndicator(bloc), 
-                      emailField(bloc),
-                      passwordField(bloc),
+                      emailField(),
+                      passwordField(),
                       new Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          submitButton(bloc),
+                          submitButton(context),
                           new Padding(
                             padding: const EdgeInsets.only(right: 20.0),
                           ),
-                          signupButton(context),
+                          signupButton(context), 
                         ],
                       )
                     ],
@@ -65,24 +63,12 @@ class LoginScreen extends StatelessWidget {
       ]),
     );
   }
-  Widget loadingIndicator(LoginBloc bloc) => StreamBuilder<bool>(
-
-    stream: bloc.loading,
-    builder: (context, snap) {
-      return Container(
-        child: (snap.hasData && snap.data)
-        ? CircularProgressIndicator() : null,
-      );
-    },
-  );
-
-  Widget emailField(LoginBloc bloc) {
+  Widget emailField() {
     return StreamBuilder(
       stream: bloc.email,
       builder: (context, snapshot) {
         return TextField(
           onChanged: bloc.changeEmail,
-          autofocus: true,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             hintText: 'You@example.com',
@@ -94,7 +80,7 @@ class LoginScreen extends StatelessWidget {
       },
     );
   }
-  Widget passwordField(LoginBloc bloc) {
+  Widget passwordField() {
     return StreamBuilder( 
       stream: bloc.password,
       builder: (context, snapshot) {
@@ -111,16 +97,16 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget submitButton(LoginBloc bloc) {    
+  Widget submitButton(BuildContext higherContext) {    
       return StreamBuilder(
-      stream: bloc.submitValid,
+      stream: bloc.submitLoginValid,
       builder: (context, snapshot) {
         return RaisedButton(
           child: Text('Login'),
           color: Colors.blue ,
           onPressed: snapshot.hasError || !snapshot.hasData 
             ? null 
-            : () => bloc.submit()       
+            : () => bloc.submitLogin(higherContext),       
         );
       },
     );

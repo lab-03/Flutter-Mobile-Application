@@ -1,31 +1,20 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
+class Test extends StatelessWidget {
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Home Page"),
-      ),
-      body: Center(
+    return Center(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             RaisedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, '/camera');
               },
-              child: Text('Go back!'),
+              child: Text('Attend'),
             ),
-            Container(margin: EdgeInsets.only(bottom: 25.0)),
-            RaisedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/scanqr');
-              },
-              child: Text('Scan QR-Code'),
-            ),
-
           ],
         ),
-      ),
     );
   }
 }

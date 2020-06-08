@@ -1,53 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:qrcode/qrcode.dart';
-import 'dart:convert';
+import '../blocs/bloc.dart';
 import 'package:http/http.dart' as http;
+import '../models/post_model.dart';
 
-
-class Post {
-  final String userId;
-  final int id;
-  final String title;
-  final String body;
- 
-  Post({this.userId, this.id, this.title, this.body});
- 
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
-      body: json['body'],
-    );
-  }
- 
-  Map toMap() {
-    var map = new Map<String, dynamic>();
-    map["userId"] = userId;
-    map["title"] = title;
-    map["body"] = body;
- 
-    return map;
-  }
-}
-
-Future<Post> createPost(String url, {Map body}) async {
-  return http.post(url, body: body).then((http.Response response) {
-    final int statusCode = response.statusCode;
- 
-    if (statusCode < 200 || statusCode > 400 || json == null) {
-      throw new Exception("Error while fetching data");
-    }
-    return Post.fromJson(json.decode(response.body));
-  });
-}
-
-class ScanQrScreen extends StatefulWidget {
+class QrTmp extends StatefulWidget {
   @override
-  _ScanQrScreenState createState() => _ScanQrScreenState();
+  _QrTmpState createState() => _QrTmpState();
 }
 
-class _ScanQrScreenState extends State<ScanQrScreen> with TickerProviderStateMixin {
+class _QrTmpState extends State<QrTmp> with TickerProviderStateMixin {
   QRCaptureController _captureController = QRCaptureController();
   Animation<Alignment> _animation;
   AnimationController _animationController;
@@ -93,10 +57,11 @@ class _ScanQrScreenState extends State<ScanQrScreen> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        // appBar: AppBar(
-        //   title: const Text('Scan QR-Code'),
-        // ),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Scan QR-Code'),
+        ),
         body: Stack(
           alignment: Alignment.center,
           children: <Widget>[
@@ -122,27 +87,33 @@ class _ScanQrScreenState extends State<ScanQrScreen> with TickerProviderStateMix
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: _buildToolBar(),
+              child: _buildToolBar(context),
             ),
             Container(
               child: Text('$_captureText'),
             )
           ],
         ),
+      ),
     );
   }
 
-  Widget _buildToolBar() {
-    return Row(
+  Widget _buildToolBar(higherContext) {
+    return StreamBuilder(
+      stream: bloc.email,
+      builder: (context, snapshot) {
+        return Row(
+    
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             FlatButton(
-              onPressed: () {
-                // Post newPost = new Post(
-                //     userId: "123", id: 0, title: 'Youssef', body: 'Khaled Roshdy');
-                // Post p = await createPost('http://localhost:3000', body: newPost.toMap());
-                // print(p.title);
+              onPressed: () async {
+                Post newPost = new Post(
+                    userId: "123", id: 0, title: 'Hello Youssef!!', body: 'Khaled Roshdy');
+                Post p = await createPost('https://jsonplaceholder.typicode.com/posts', body: newPost.toMap());
+                
+                
                 _captureController.pause();
               },
               child: Text('pause'),
@@ -166,5 +137,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> with TickerProviderStateMix
             ),
           ],
         );
+      },
+    );
   }
 }
