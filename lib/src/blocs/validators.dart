@@ -36,7 +36,7 @@ class Validators {
 
   final validatePassword = StreamTransformer<String, String>.fromHandlers(
     handleData: (password, sink) {
-      if (password.length == 8) {
+      if (password.length == 6) { // 8
         sink.add(password);
       } else {
         sink.addError("Password must be 8 charachters !!!");

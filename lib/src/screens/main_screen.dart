@@ -12,14 +12,14 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
   Widget callPage(currentIndex) {
     switch (currentIndex) {
-      case 0: return Test();
+      case 0: return Attend();
       break;
       case 1: return ProfleScreen();
       break;
-      case 2: return ScanQrScreen();
+      case 2: return ProfleScreen();//ScanQrScreen()
         break;
       default: ProfleScreen();
     }

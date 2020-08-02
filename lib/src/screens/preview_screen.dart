@@ -33,11 +33,18 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
               flex: 1,
               child: Container(
                 padding: EdgeInsets.all(60.0),
-                child: RaisedButton(
-                  onPressed: () {
+                child: FlatButton(
+                  padding: EdgeInsets.all(15.0),
+                  onPressed: () async {
                     Navigator.pushNamed(context, '/scanQr');
                   },
-                  child: Text('Scan QR'),
+                  child: Text(
+                    "Scan",
+                    style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),
+                  ),
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.blue,width: 3.0),
+                      borderRadius: BorderRadius.circular(20.0)),
                 ),
               ),
             ),
@@ -46,7 +53,7 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
       ),
     );
   }
-
+  
   Future<ByteData> getBytesFromFile() async {
     Uint8List bytes = File(widget.imagePath).readAsBytesSync() as Uint8List;
     return ByteData.view(bytes.buffer);

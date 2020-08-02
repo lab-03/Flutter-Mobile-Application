@@ -99,7 +99,7 @@ class _CameraScreenState extends State {
       ),
     );
   }
-
+  
   /// Display Camera preview.
   Widget _cameraPreviewWidget() {
     if (controller == null || !controller.value.isInitialized) {

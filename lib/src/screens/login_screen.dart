@@ -5,7 +5,7 @@ import 'package:login_bloc/src/blocs/login_bloc.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginBloc bloc = LoginBloc();
-  
+
   @override
   Widget build(BuildContext context) {  
     return new Scaffold(
@@ -42,6 +42,7 @@ class LoginScreen extends StatelessWidget {
                       loadingIndicator(bloc), 
                       emailField(bloc),
                       passwordField(bloc),
+                      errorMessage(bloc),
                       new Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                       ),
@@ -72,6 +73,19 @@ class LoginScreen extends StatelessWidget {
       return Container(
         child: (snap.hasData && snap.data)
         ? CircularProgressIndicator() : null,
+      );
+    },
+  );
+
+  Widget errorMessage(LoginBloc bloc) => StreamBuilder<bool>(
+
+    stream: bloc.error,
+    builder: (context, snap) {
+      return Container(
+        child: (snap.hasData && snap.data)
+        ? Text("Invalid login credentials. Please try again.", 
+          style: TextStyle(color: Colors.red),) 
+        : null,
       );
     },
   );
@@ -119,7 +133,7 @@ class LoginScreen extends StatelessWidget {
           child: Text('Login'),
           color: Colors.blue ,
           onPressed: snapshot.hasError || !snapshot.hasData 
-            ? null 
+            ? null
             : () => bloc.submit()       
         );
       },

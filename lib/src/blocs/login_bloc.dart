@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:login_bloc/src/blocs/validators.dart';
 import 'package:login_bloc/src/resources/repository.dart';
 import 'package:rxdart/rxdart.dart';
@@ -11,6 +13,7 @@ class LoginBloc extends Validators {
   final BehaviorSubject _emailController = BehaviorSubject<String>();
   final BehaviorSubject _passwordController = BehaviorSubject<String>();
   final PublishSubject _loadingData = PublishSubject<bool>();
+  final PublishSubject _errorController = PublishSubject<bool>();
 
   Function(String) get changeEmail => _emailController.sink.add;
   Function(String) get changePassword => _passwordController.sink.add;
@@ -19,12 +22,33 @@ class LoginBloc extends Validators {
   Stream<String> get password => _passwordController.stream.transform(validatePassword);
   Stream<bool> get submitValid => Rx.combineLatest2(email, password, (email, password) => true);
   Stream<bool> get loading => _loadingData.stream;
+  Stream<bool> get error => _errorController.stream;
 
-  void submit() {
+
+  void submit() async{
     final validEmail = _emailController.value;
     final validPassword = _passwordController.value;
-    _loadingData.sink.add(true);
-    login(validEmail, validPassword);
+    Map data = {
+      'email': validEmail,
+      'password': validPassword,
+    };
+    var jsonResponse = null;
+    var response = await http.post("https://a-tracker.herokuapp.com/auth/sign_in", body: data);
+    if(response.statusCode == 200) {
+      _loadingData.sink.add(true);
+      jsonResponse = json.decode(response.body);
+      if(jsonResponse != null) {
+        login(validEmail, validPassword);
+      }
+    }
+    else {
+      _loadingData.sink.add(true);
+      _errorController.sink.add(true);
+      print(response.body);
+      _loadingData.sink.add(false);
+      // _emailController.sink.close();
+      // _passwordController.sink.close();
+    }
 
   }
 

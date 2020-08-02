@@ -5,6 +5,8 @@ import 'package:login_bloc/src/screens/scanQR_screen.dart';
 import 'package:login_bloc/src/screens/signup_screen.dart';
 import 'package:login_bloc/src/screens/camera_screen.dart';
 import './screens/login_screen.dart';
+import 'screens/scan.dart';
+
 
 class App extends StatelessWidget {
   
@@ -17,9 +19,9 @@ class App extends StatelessWidget {
         '/': (context) => createContent(),
         '/signup': (context) => SignupScreen(),
         '/login' : (context) => LoginScreen(),
-        '/scanQr' : (context) => ScanQrScreen(),
+        '/scanQr' : (context) => ScanPage(),//ScanQrScreen(),
         '/camera' : (context) => CameraScreen(),
-        //'/home' : (context) => createContent(),
+        '/home' : (context) => MainScreen(),
 
       },
       title: "Biometric Attendance & Academic Analytics",
@@ -40,7 +42,7 @@ class App extends StatelessWidget {
   }
 
   // Route routes(RouteSettings settings) {
-  //   if (settings.name == '/') {
+  //   if (settings.name == '/') { 
   //     return MaterialPageRoute( 
   //       builder: (context) {
   //         return HomeScreen();
@@ -63,7 +65,7 @@ class App extends StatelessWidget {
   //       }
   //     );
   //   } else if (settings.name == '/testpage') {
-  //     return MaterialPageRoute( 
+  //     return MaterialPageRoute(  
   //     builder: (context) {
   //       return Scaffold(
   //         body: Test(),
