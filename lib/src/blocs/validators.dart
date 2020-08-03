@@ -14,11 +14,12 @@ class Validators {
 
   final validateImage = StreamTransformer<String, String>.fromHandlers(
     handleData: (image, sink) {
-      if (image == "Done") {
-        sink.add(image);
-      } else {
-        sink.addError("Please enter at least 3 images !!!");
-      }
+      // if (image == "Done") {
+      //   sink.add(image);
+      // } else {
+      //   sink.addError("Please enter at least 3 images !!!");
+      // }
+      sink.add(image);
     }
   );
 

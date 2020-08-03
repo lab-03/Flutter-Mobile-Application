@@ -5,6 +5,7 @@ import './signup_screen.dart';
 import './scanQR_screen.dart';
 import './profile_screen.dart';
 import './home_screen.dart';
+import 'imageUpload.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -19,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
       break;
       case 1: return ProfleScreen();
       break;
-      case 2: return ProfleScreen();//ScanQrScreen()
+      case 2: return UserInfoEdit();//ScanQrScreen()
         break;
       default: ProfleScreen();
     }

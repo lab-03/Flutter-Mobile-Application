@@ -46,11 +46,12 @@ class _ScanPageState extends State<ScanPage> {
               padding: EdgeInsets.all(15.0),
               onPressed: () async {
                 try {
-                  ScanResult codeScanner = await BarcodeScanner.scan();
-                  print(codeScanner.formatNote);
-                  setState(() => this.qrCodeResult = codeScanner.hashCode.toString());
+                  String codeScanner = await BarcodeScanner.scan();
+                  String cameraScanResult = "Hello";//await scanner.scan();
+                  print(codeScanner);
+                  setState(() => this.qrCodeResult = cameraScanResult);
                 } on PlatformException catch (e) {
-                  if (e.code == BarcodeScanner.cameraAccessDenied) {
+                  if (e.code == BarcodeScanner.CameraAccessDenied) {
                     setState(() {
                       this.qrCodeResult = 'The user did not grant the camera permission!';
                     });
@@ -66,7 +67,7 @@ class _ScanPageState extends State<ScanPage> {
                 Position currentLocation = await Geolocator()
                   .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);  
                 Map data = {
-                  "hash": qrCodeResult.hashCode.toString(),
+                  "hash": qrCodeResult,
                   "longitude": "${currentLocation.longitude}",
                   "latitude": "${currentLocation.latitude}",
                   "date": currentData.toString()

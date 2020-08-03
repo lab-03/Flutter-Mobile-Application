@@ -5,7 +5,9 @@ import 'package:login_bloc/src/screens/scanQR_screen.dart';
 import 'package:login_bloc/src/screens/signup_screen.dart';
 import 'package:login_bloc/src/screens/camera_screen.dart';
 import './screens/login_screen.dart';
+import 'screens/attend_options.dart';
 import 'screens/scan.dart';
+import 'screens/tmp_signup.dart';
 
 
 class App extends StatelessWidget {
@@ -17,11 +19,12 @@ class App extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => createContent(),
-        '/signup': (context) => SignupScreen(),
+        '/signup': (context) => TmpSignupScreen() ,//SignupScreen(),
         '/login' : (context) => LoginScreen(),
         '/scanQr' : (context) => ScanPage(),//ScanQrScreen(),
         '/camera' : (context) => CameraScreen(),
         '/home' : (context) => MainScreen(),
+        '/attend_options' : (context) => AttendOptions(),
 
       },
       title: "Biometric Attendance & Academic Analytics",

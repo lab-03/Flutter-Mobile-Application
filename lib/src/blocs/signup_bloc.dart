@@ -1,7 +1,12 @@
+
+import 'dart:convert';
+import 'dart:io';
 import 'package:login_bloc/src/blocs/validators.dart';
 import 'package:login_bloc/src/resources/repository.dart';
+import 'package:mime/mime.dart';
 import 'package:rxdart/rxdart.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'authorization_bloc.dart';
 
 class SignupBloc extends Validators {
@@ -9,13 +14,13 @@ class SignupBloc extends Validators {
   Repository repository = Repository();
 
   final BehaviorSubject _nameController = BehaviorSubject<String>();
-  final BehaviorSubject _imageController = BehaviorSubject<String>();
+  final BehaviorSubject _imageController = BehaviorSubject<bool>();
   final BehaviorSubject _emailController = BehaviorSubject<String>();
   final BehaviorSubject _passwordController = BehaviorSubject<String>();
   final PublishSubject _loadingData = PublishSubject<bool>();
 
   Function(String) get changeName => _nameController.sink.add;
-  Function(String) get changeImage => _imageController.sink.add;
+  // Function(String) get changeImage => _imageController.sink.add;
   Function(String) get changeEmail => _emailController.sink.add;
   Function(String) get changePassword => _passwordController.sink.add;
 
@@ -26,14 +31,63 @@ class SignupBloc extends Validators {
   Stream<bool> get submitValid => Rx.combineLatest4(name, image, email, password, (n, i, e, p) => true);
   Stream<bool> get loading => _loadingData.stream;
 
-  void submit() {
+  Future<void> submit() async {
     final validName = _nameController.value;
     final validImage = _imageController.value;
     final validEmail = _emailController.value;
     final validPassword = _passwordController.value;
-    _loadingData.sink.add(true);
-    signup(validName, validImage, validEmail, validPassword);
+    print("Everything is okay>>>");
+    Uri apiUrl = Uri.parse(
+      'https://a-tracker.herokuapp.com/students');
+    Future<Map<String, dynamic>> _uploadImage(File image) async {
+      _loadingData.add(true);
 
+      final mimeTypeData =
+          lookupMimeType(image.path, headerBytes: [0xFF, 0xD8]).split('/');
+
+      // Intilize the multipart request
+      final imageUploadRequest = http.MultipartRequest('POST', apiUrl);
+
+      // Attach the file in the request
+      final file = await http.MultipartFile.fromPath(
+          'half_body_image', image.path,
+          contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+      // Explicitly pass the extension of the image with request body
+      // Since image_picker has some bugs due which it mixes up
+      // image extension with file name like this filenamejpge
+      // Which creates some problem at the server side to manage
+      // or verify the file extension
+
+  //    imageUploadRequest.fields['ext'] = mimeTypeData[1];
+
+      imageUploadRequest.files.add(file);
+      imageUploadRequest.fields['name'] = validName;
+      imageUploadRequest.fields['email'] = validEmail;
+      imageUploadRequest.fields['password_no'] = validPassword;
+
+      try {
+        final streamedResponse = await imageUploadRequest.send();
+        final response = await http.Response.fromStream(streamedResponse);
+        if (response.statusCode != 200) {
+          return null;
+        }
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        //_resetState();
+        return responseData;
+      } catch (e) {
+        print(e);
+        return null;
+      }
+    }
+    final Map<String, dynamic> response = await _uploadImage(validImage);
+
+      // Check if any error occured
+      if (response == null) {
+        _loadingData.add(false);
+        signup(validName, validImage, validEmail, validPassword);
+      } else {
+        print('Please Select a profile photo profile Photo');
+      }
   }
 
   signup(String name, String image, String email, String password) async {

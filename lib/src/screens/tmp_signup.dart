@@ -1,44 +1,20 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:login_bloc/src/blocs/signup_bloc.dart';
 
-class SignupScreen extends StatefulWidget {
+
+class TmpSignupScreen extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SignupScreenState();
+  State<StatefulWidget> createState() => _TmpSignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _TmpSignupScreenState extends State<TmpSignupScreen> {
   SignupBloc bloc = SignupBloc();
-  File _imageFile;
-  TextEditingController _controller;
-
-
-
-
-  Future<void> _pickImage(ImageSource source) async{
-    File selected = await ImagePicker.pickImage(source: source);
-
-    setState(() {
-      _imageFile = selected;
-    });
-  }
-
-  Future<void> _cropImage() async{
-    File cropped = await ImageCropper.cropImage(
-      sourcePath: _imageFile.path,
-    );
-    setState(() {
-      _imageFile =cropped ?? _imageFile;
-    });
-  }
-
-  void _clear() {
-    setState(() => _imageFile = null);
-  }
-
+  File _image;
 
   Widget build(BuildContext context) {
     return SafeArea(
@@ -75,8 +51,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         loadingIndicator(bloc), 
-                        nameField(bloc),
                         imageField(bloc),
+                        nameField(bloc),
                         emailField(bloc),
                         passwordField(bloc),
                         new Padding(
@@ -136,18 +112,101 @@ class _SignupScreenState extends State<SignupScreen> {
     return StreamBuilder( 
       stream: bloc.image,
       builder: (context, snapshot) {
-        return TextField(
-          //onChanged: bloc.changeImage,
-          // enabled: false,
-          decoration: InputDecoration(
-            labelText: "Image",
-            errorText: snapshot.error,
+        return Container(
+          margin: EdgeInsets.only(top: 10),
+          alignment: Alignment.center,
+          child: Column(
+            children: <Widget>[
+              Stack(
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundImage: _image == null
+                        ? NetworkImage(
+                            'https://git.unilim.fr/assets/no_group_avatar-4a9d347a20d783caee8aaed4a37a65930cb8db965f61f3b72a2e954a0eaeb8ba.png')
+                        : FileImage(_image),
+                    radius: 50.0,
+                  ),
+                  InkWell(
+                    onTap: _onAlertPress,
+                    child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40.0),
+                            color: Colors.black),
+                        margin: EdgeInsets.only(left: 70, top: 70),
+                        child: Icon(
+                          Icons.photo_camera,
+                          size: 25,
+                          color: Colors.white,
+                        )),
+                  ),
+                ],
+              ),
+              Text('Half Body',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+            ],
           ),
         );
       }
     );
   }
+void _onAlertPress() async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return new CupertinoAlertDialog(
+            actions: [
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                child: Column(
+                  children: <Widget>[
+                    Image.asset(
+                      "assets/images/gallery.png",
+                      width: 50,
+                    ),
+                    Text('Gallery'),
+                  ],
+                ),
+                onPressed: getGalleryImage,
+              ),
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                child: Column(
+                  children: <Widget>[
+                    Image.asset(
+                      "assets/images/take_picture.png",
+                      width: 50,
+                      scale: 0.5,
+                    ),
+                    Text('Take Photo'),
+                  ],
+                ),
+                onPressed: getCameraImage,
+              ),
+            ],
+          );
+        });
+  }
 
+  // ================================= Image from camera
+  Future getCameraImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      _image = image;
+      Navigator.pop(context);
+    });
+  }
+
+  //============================== Image from gallery
+  Future getGalleryImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+      Navigator.pop(context);
+    });
+  }
           
   Widget emailField(SignupBloc bloc) {
     return StreamBuilder(
