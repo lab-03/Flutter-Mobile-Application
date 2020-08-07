@@ -3,6 +3,7 @@ import 'authorization_bloc.dart';
 class HomeBloc {
 
   logoutUser() {
-  authBloc.closeSession();
+    authBloc.closeSession();
+    print("closing Session");
   }
 }

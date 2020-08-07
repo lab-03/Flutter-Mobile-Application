@@ -73,7 +73,7 @@ class _AttendOptionsState extends State<AttendOptions> {
   }
 
   void _cancelAuthentication() {
-    auth.stopAuthentication();
+    //auth.stopAuthentication();
   }
   
   @override

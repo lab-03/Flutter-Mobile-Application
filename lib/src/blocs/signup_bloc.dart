@@ -25,15 +25,15 @@ class SignupBloc extends Validators {
   Function(String) get changePassword => _passwordController.sink.add;
 
   Stream<String> get name => _nameController.stream.transform(validateName);
-  Stream<String> get image => _imageController.stream.transform(validateImage);
+  // Stream<String> get image => _imageController.stream.transform(validateImage);
   Stream<String> get email => _emailController.stream.transform(validateEmail);
   Stream<String> get password => _passwordController.stream.transform(validatePassword);
-  Stream<bool> get submitValid => Rx.combineLatest4(name, image, email, password, (n, i, e, p) => true);
+  Stream<bool> get submitValid => Rx.combineLatest3(name, email, password, (n, e, p) => true);
   Stream<bool> get loading => _loadingData.stream;
 
-  Future<void> submit() async {
+  void submit(File image) async {
     final validName = _nameController.value;
-    final validImage = _imageController.value;
+    // final validImage = _imageController.value;
     final validEmail = _emailController.value;
     final validPassword = _passwordController.value;
     print("Everything is okay>>>");
@@ -50,25 +50,22 @@ class SignupBloc extends Validators {
 
       // Attach the file in the request
       final file = await http.MultipartFile.fromPath(
-          'half_body_image', image.path,
+          'student[image]', image.path,
           contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
-      // Explicitly pass the extension of the image with request body
-      // Since image_picker has some bugs due which it mixes up
-      // image extension with file name like this filenamejpge
-      // Which creates some problem at the server side to manage
-      // or verify the file extension
-
-  //    imageUploadRequest.fields['ext'] = mimeTypeData[1];
+      print("image: ${image}");
+      print("file: ${file}");
 
       imageUploadRequest.files.add(file);
-      imageUploadRequest.fields['name'] = validName;
-      imageUploadRequest.fields['email'] = validEmail;
-      imageUploadRequest.fields['password_no'] = validPassword;
+      //imageUploadRequest.fields['name'] = validName;
+      imageUploadRequest.fields['student[email]'] = validEmail;
+      imageUploadRequest.fields['student[password]'] = validPassword;
 
       try {
         final streamedResponse = await imageUploadRequest.send();
         final response = await http.Response.fromStream(streamedResponse);
-        if (response.statusCode != 200) {
+        if (response.statusCode != 201) {
+          print(response.statusCode);
+          print("Not Correct!!");
           return null;
         }
         final Map<String, dynamic> responseData = json.decode(response.body);
@@ -79,21 +76,28 @@ class SignupBloc extends Validators {
         return null;
       }
     }
-    final Map<String, dynamic> response = await _uploadImage(validImage);
-
-      // Check if any error occured
-      if (response == null) {
-        _loadingData.add(false);
-        signup(validName, validImage, validEmail, validPassword);
-      } else {
-        print('Please Select a profile photo profile Photo');
-      }
+    if (image != null) {
+      
+      signup(validName, image.toString(), validEmail, validPassword);
+      // final Map<String, dynamic> response = await _uploadImage(image);
+      // print(response);
+      // if (response["id"] < 0) {
+      //   // _loadingData.add(false);
+      //   print('hello world');
+      //   signup(validName, image.toString(), validEmail, validPassword);
+      // } else {
+      //   print('Please Select a profile photo profile Photo');
+      //   dispose();
+      // }
+    }      
   }
 
   signup(String name, String image, String email, String password) async {
     String token = await repository.signup(name, image, email, password);
+    print(token);
     _loadingData.sink.add(false);
     authBloc.openSession(token);
+    print('gell');
   }
 
   void dispose() {

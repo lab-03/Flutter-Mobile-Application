@@ -54,6 +54,7 @@ class LoginBloc extends Validators {
 
   login(String email, String password) async {
     String token = await repository.login(email, password);
+    print(token);
     _loadingData.sink.add(false);
     authBloc.openSession(token);
   }

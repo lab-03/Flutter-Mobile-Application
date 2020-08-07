@@ -202,6 +202,7 @@ class _CameraScreenState extends State {
           builder: (context) => PreviewImageScreen(imagePath: path),
         ),
       );
+      //await controller.dispose();
     } catch (e) {
       // If an error occurs, log the error to the console.
       print(e);

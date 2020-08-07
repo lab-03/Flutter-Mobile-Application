@@ -1,6 +1,6 @@
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -13,6 +13,7 @@ class ScanPage extends StatefulWidget {
 
 class _ScanPageState extends State<ScanPage> {
   String qrCodeResult = "Not Yet Scanned";
+  String qrHash = "";
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +47,14 @@ class _ScanPageState extends State<ScanPage> {
               padding: EdgeInsets.all(15.0),
               onPressed: () async {
                 try {
-                  String codeScanner = await BarcodeScanner.scan();
-                  String cameraScanResult = "Hello";//await scanner.scan();
-                  print(codeScanner);
-                  setState(() => this.qrCodeResult = cameraScanResult);
+                  String cameraScanResult = await BarcodeScanner.scan();
+                  var scanResultJson = json.decode(cameraScanResult);
+                  print(scanResultJson["hash"]);
+                  setState(() { 
+                    this.qrHash = scanResultJson["hash"];
+                    this.qrCodeResult = "Wait while processing";
+                  }
+                  );
                 } on PlatformException catch (e) {
                   if (e.code == BarcodeScanner.CameraAccessDenied) {
                     setState(() {
@@ -64,34 +69,47 @@ class _ScanPageState extends State<ScanPage> {
                   setState(() => this.qrCodeResult = 'Unknown error: $e');
                 }
                 var currentData = new DateTime.now();
-                Position currentLocation = await Geolocator()
-                  .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);  
+                var location = new Location();
+                String longitude = "";
+                String latitude = "";
+                try {
+                  await location.getLocation().then((onValue) {
+                    print(onValue.latitude.toString() + "," + onValue.longitude.toString());
+                    longitude = onValue.longitude.toString();
+                    latitude = onValue.latitude.toString();
+                          
+                  });
+                } catch (e) {
+                  print(e);
+                  if (e.code == 'PERMISSION_DENIED') {
+                    print("PERMISSION_DENIED");
+                  }
+                } 
+                print(currentData);
                 Map data = {
-                  "hash": qrCodeResult,
-                  "longitude": "${currentLocation.longitude}",
-                  "latitude": "${currentLocation.latitude}",
-                  "date": currentData.toString()
+                  "hash": "46fa1be6379a8b03629551ce9ec74664f79edece",
+                  "longitude": "31.329484800000003",
+                  "latitude": "29.8549248",
                 };
+                // Map data = {
+                //   "hash": qrHash, // "6ebd4446e59a02f5b57c96a600e8ecb3c2281ead"
+                //   "longitude": "${longitude}",// "10.807222"
+                //   "latitude": "${latitude}", // "-90.984722"
+                //   //"date": currentData.toString()
+                // };
                 print(data);
                 var jsonResponse = null;
                 var response = await http.post("https://gp-qrcode.herokuapp.com/api/qrcodes/attend", body: data);
+
                 if(response.statusCode == 200) {
-                  //_loadingData.sink.add(true);
                   jsonResponse = json.decode(response.body);
-                  if (jsonResponse['status' == "success"]) {
+                  if (jsonResponse['status'] == "success") {
                     showAlertDialog(context, jsonResponse['message']); 
                   }                
+                } else {
+                  print('Wrong Hash code');
+                  setState(() => this.qrCodeResult = 'Wrong Hash code');
                 }
-                
-
-                // try{
-                //   BarcodeScanner.scan()    this method is used to scan the QR code
-                // }catch (e){
-                //   BarcodeScanner.CameraAccessDenied;   we can print that user has denied for the permisions
-                //   BarcodeScanner.UserCanceled;   we can print on the page that user has cancelled
-                // }
-
-
               },
               child: Text(
                 "Open Scanner",

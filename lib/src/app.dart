@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:login_bloc/src/blocs/authorization_bloc.dart';
 import 'package:login_bloc/src/screens/main_screen.dart';
-import 'package:login_bloc/src/screens/scanQR_screen.dart';
-import 'package:login_bloc/src/screens/signup_screen.dart';
+// import 'package:login_bloc/src/screens/signup_screen_o.dart';
 import 'package:login_bloc/src/screens/camera_screen.dart';
 import './screens/login_screen.dart';
 import 'screens/attend_options.dart';
 import 'screens/scan.dart';
-import 'screens/tmp_signup.dart';
+import 'screens/signup_screen.dart';
 
 
 class App extends StatelessWidget {
@@ -19,7 +18,7 @@ class App extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => createContent(),
-        '/signup': (context) => TmpSignupScreen() ,//SignupScreen(),
+        '/signup': (context) => SignupScreen(),
         '/login' : (context) => LoginScreen(),
         '/scanQr' : (context) => ScanPage(),//ScanQrScreen(),
         '/camera' : (context) => CameraScreen(),

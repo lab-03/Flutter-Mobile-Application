@@ -34,7 +34,7 @@ dependencies:
   camera: ^0.5.8+2
   path_provider: ^1.6.10
   path: ^1.6.4
-  geolocator: ^5.3.2+2
+  location: ^3.0.2
   loading: ^1.0.2
   mime: ^0.9.6+3
   progress_dialog: ^1.2.4
