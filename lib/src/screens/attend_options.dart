@@ -63,6 +63,9 @@ class _AttendOptionsState extends State<AttendOptions> {
       Navigator.pushNamed(context, '/scanQr');
     } on PlatformException catch (e) {
       print(e);
+      setState(() {
+        _authorized = e.toString();
+      });
     }
     if (!mounted) return;
 
@@ -81,7 +84,14 @@ class _AttendOptionsState extends State<AttendOptions> {
     return MaterialApp(
         home: Scaffold(
       appBar: AppBar(
-        title: const Text('Plugin example app'),
+        title: const Text('Fingerprint Authentication'),
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.black,
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: ConstrainedBox(
           constraints: const BoxConstraints.expand(),

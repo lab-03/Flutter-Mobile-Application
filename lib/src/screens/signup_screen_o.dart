@@ -134,7 +134,8 @@ class _UserInfoEditState extends State<UserInfoEdit> {
                             ),
                             textAlign: TextAlign.center,
                             validator: (value) {
-                              if (value.isEmpty) {
+                              RegExp exp = new RegExp(r"^[a-zA-Z.+'-]+(?: [a-zA-Z.+'-]+){2,} ?$"); //r"^[a-zA-Z0-9._%+-]+@stud\.fci-cu\.edu\.eg$"
+                              if (!exp.hasMatch(value) || value.isEmpty) {  
                                 return 'Please enter full name';
                               }
                               return null;
@@ -164,6 +165,8 @@ class _UserInfoEditState extends State<UserInfoEdit> {
                               ),
                               textAlign: TextAlign.center,
                               validator: (value) {
+                                RegExp exp = new RegExp(r"^[a-zA-Z0-9._%+-]+"); //r"^[a-zA-Z0-9._%+-]+@stud\.fci-cu\.edu\.eg$"
+                                //r"^[a-zA-Z0-9._%+-]+" 
                                 if (value.isEmpty) {
                                   return 'Please enter email address';
                                 }
@@ -197,7 +200,7 @@ class _UserInfoEditState extends State<UserInfoEdit> {
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.phone,
                               validator: (value) {
-                                if (value.isEmpty) {
+                                if (value.isEmpty || value.length != 6) {
                                   return 'Please enter emergency password number';
                                 }
                                 return null;
@@ -214,19 +217,24 @@ class _UserInfoEditState extends State<UserInfoEdit> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(25),
                                   color: Colors.blue),
-                              child: FlatButton(
-                                child: FittedBox(
-                                    child: Text(
-                                  'Save',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16),
-                                  textAlign: TextAlign.center,
-                                )),
-                                onPressed: () {
-                                  if (_formKey.currentState.validate()) {
-                                    _startUploading();
-                                  }
-                                },
+                              child: Row(
+                                children: <Widget>[
+                                  FlatButton(
+                                    child: FittedBox(
+                                        child: Text(
+                                      'Sign up',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 16),
+                                      textAlign: TextAlign.center,
+                                    )),
+                                    onPressed: () {
+                                      if (_formKey.currentState.validate()) {
+                                        _startUploading();
+                                      }
+                                    },
+                                  ),
+                                  loginButton(context),
+                                ],
                               ),
                             ),
                           ),
@@ -244,6 +252,13 @@ class _UserInfoEditState extends State<UserInfoEdit> {
     );
   }
 
+  Widget loginButton(BuildContext context) {    
+      return RaisedButton(
+          child: Text('Login'),
+          color: Colors.blue ,
+          onPressed: () => Navigator.pushNamed(context, '/')   
+        );
+  }
   //========================================================================== Funcions Area
 
   //========================= Gellary / Camera AlerBox
@@ -321,7 +336,7 @@ class _UserInfoEditState extends State<UserInfoEdit> {
 
     // Attach the file in the request
     final file = await http.MultipartFile.fromPath(
-        'half_body_image', image.path,
+        'student[image]', image.path,
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
     // Explicitly pass the extension of the image with request body
     // Since image_picker has some bugs due which it mixes up
@@ -332,14 +347,16 @@ class _UserInfoEditState extends State<UserInfoEdit> {
 //    imageUploadRequest.fields['ext'] = mimeTypeData[1];
 
     imageUploadRequest.files.add(file);
-    imageUploadRequest.fields['name'] = _name;
-    imageUploadRequest.fields['email'] = _email;
-    imageUploadRequest.fields['password_no'] = _password;
+    // imageUploadRequest.fields['name'] = _name;
+    imageUploadRequest.fields['student[email]'] = _email;
+    imageUploadRequest.fields['student[password]'] = _password;
 
     try {
       final streamedResponse = await imageUploadRequest.send();
       final response = await http.Response.fromStream(streamedResponse);
-      if (response.statusCode != 200) {
+      if (response.statusCode != 201) {
+        print(response.statusCode);
+        print("Not Correct!!");
         return null;
       }
       final Map<String, dynamic> responseData = json.decode(response.body);
@@ -359,16 +376,20 @@ class _UserInfoEditState extends State<UserInfoEdit> {
       final Map<String, dynamic> response = await _uploadImage(_image);
 
       // Check if any error occured
-      if (response == null) {
+      if (response != null) {
         pr.hide();
         messageAllert('User details updated successfully', 'Success');
+      } else {
+        pr.hide();
+        messageAllert('Profile', 'Profile Photo');
       }
     } else {
-      messageAllert('Please Select a profile photo', 'Profile Photo');
+      messageAllert('Please Select a profile photo', 'Failed');
     }
   }
 
   void _resetState() {
+    print('working');
     setState(() {
       pr.hide();
       _name = null;
@@ -379,7 +400,7 @@ class _UserInfoEditState extends State<UserInfoEdit> {
   }
 
   messageAllert(String msg, String ttl) {
-    Navigator.pop(context);
+    // Navigator.pop(context);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -395,7 +416,11 @@ class _UserInfoEditState extends State<UserInfoEdit> {
                   ],
                 ),
                 onPressed: () {
-                  Navigator.pop(context);
+                  if (ttl == 'success') {
+                    Navigator.pushNamed(context, '/');
+                  } else {
+                    Navigator.pop(context);
+                  }
                 },
               ),
             ],

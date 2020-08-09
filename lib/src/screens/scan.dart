@@ -86,17 +86,17 @@ class _ScanPageState extends State<ScanPage> {
                   }
                 } 
                 print(currentData);
-                Map data = {
-                  "hash": "46fa1be6379a8b03629551ce9ec74664f79edece",
-                  "longitude": "31.329484800000003",
-                  "latitude": "29.8549248",
-                };
                 // Map data = {
-                //   "hash": qrHash, // "6ebd4446e59a02f5b57c96a600e8ecb3c2281ead"
-                //   "longitude": "${longitude}",// "10.807222"
-                //   "latitude": "${latitude}", // "-90.984722"
-                //   //"date": currentData.toString()
+                //   "hash": "46fa1be6379a8b03629551ce9ec74664f79edece",
+                //   "longitude": "31.329484800000003",
+                //   "latitude": "29.8549248",
                 // };
+                Map data = {
+                  "hash": qrHash, // "6ebd4446e59a02f5b57c96a600e8ecb3c2281ead"
+                  "longitude": "${longitude}",// "10.807222"
+                  "latitude": "${latitude}", // "-90.984722"
+                  //"date": currentData.toString()
+                };
                 print(data);
                 var jsonResponse = null;
                 var response = await http.post("https://gp-qrcode.herokuapp.com/api/qrcodes/attend", body: data);
@@ -108,6 +108,7 @@ class _ScanPageState extends State<ScanPage> {
                   }                
                 } else {
                   print('Wrong Hash code');
+                  print('status: ${response.statusCode}');
                   setState(() => this.qrCodeResult = 'Wrong Hash code');
                 }
               },

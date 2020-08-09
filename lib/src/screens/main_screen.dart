@@ -3,7 +3,7 @@ import 'package:login_bloc/src/blocs/home_bloc.dart';
 import './login_screen.dart';
 import './signup_screen.dart';
 import './profile_screen.dart';
-import './home_screen.dart';
+import './attend_screen.dart';
 import 'imageUpload.dart';
 
 class MainScreen extends StatefulWidget {
