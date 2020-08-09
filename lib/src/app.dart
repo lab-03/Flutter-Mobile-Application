@@ -4,6 +4,7 @@ import 'package:login_bloc/src/screens/main_screen.dart';
 import 'package:login_bloc/src/screens/camera_screen.dart';
 import './screens/login_screen.dart';
 import 'screens/attend_options.dart';
+import 'screens/questions_screen.dart';
 import 'screens/scan.dart';
 import 'screens/signup_screen.dart';
 import 'screens/signup_screen_o.dart';
@@ -25,6 +26,7 @@ class App extends StatelessWidget {
         '/camera' : (context) => CameraScreen(),
         '/home' : (context) => MainScreen(),
         '/attend_options' : (context) => AttendOptions(),
+        '/questions' : (context) => Questions(),
 
       },
       title: "Biometric Attendance & Academic Analytics",

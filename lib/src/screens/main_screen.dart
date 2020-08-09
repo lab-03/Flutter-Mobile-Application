@@ -5,6 +5,7 @@ import './signup_screen.dart';
 import './profile_screen.dart';
 import './attend_screen.dart';
 import 'imageUpload.dart';
+import 'participation_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -12,14 +13,17 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 1;
+  int _currentIndex = 0;
+  var _pages = [Attend(), ProfleScreen(), Participate()];
+  var _pageController = PageController();
+
   Widget callPage(currentIndex) {
     switch (currentIndex) {
       case 0: return Attend();
       break;
       case 1: return ProfleScreen();
       break;
-      case 2: return UserInfoEdit();//ScanQrScreen()
+      case 2: return Participate();//ScanQrScreen()
         break;
       default: ProfleScreen();
     }
@@ -46,9 +50,10 @@ class _MainScreenState extends State<MainScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (value) {
+        onTap: (index) {
           setState(() {
-            _currentIndex = value;
+            _currentIndex = index;
+            _pageController.animateToPage(_currentIndex, duration: Duration(milliseconds: 200), curve: Curves.linear);
           });
         },
         items: [
@@ -66,7 +71,15 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-      body: callPage(_currentIndex),
+      body: PageView(
+        children: _pages,
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),//callPage(_currentIndex),
     );
   }
 
