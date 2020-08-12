@@ -1,7 +1,47 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pie_chart/pie_chart.dart';
 
+class ProfleScreen extends StatefulWidget {
+  
+  @override
+  _ProfleScreenState createState() => _ProfleScreenState();
+}
 
-class ProfleScreen extends StatelessWidget {
+class _ProfleScreenState extends State<ProfleScreen> {
+
+  Map<String, double> data = new Map();
+  bool _loadChart = false;
+  String buttonText = "Click to Show Chart";
+  var res;
+  
+  @override
+  void initState() {
+    res = getSharedPref();
+    data.addAll({
+      'ATTENDED': 35,
+      'ABSENCE': 7,
+    });
+  }
+  List<Color> _colors = [
+    Colors.green,
+    Colors.redAccent
+  ];
+
+  getSharedPref() async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String res = prefs.get("signin_response");
+  String headers = prefs.get("signin_headers");
+  var jsonHeaders = json.decode(headers);
+  var jsonRes = json.decode(res);
+  print(jsonRes);
+
+  return jsonRes;
+  
+  }
+
   Widget build(BuildContext context) {
     return ListView(
       children: <Widget>[
@@ -97,9 +137,49 @@ class ProfleScreen extends StatelessWidget {
                             color: Colors.grey),
                       )
                     ],
-                  )
+                  ),
                 ],
               ),
+            ),
+            _loadChart ? PieChart(
+              dataMap: data,
+              colorList:
+                  _colors, // if not declared, random colors will be chosen
+              animationDuration: Duration(milliseconds: 1500),
+              chartLegendSpacing: 32.0,
+              chartRadius: MediaQuery.of(context).size.width /
+                  2.7, //determines the size of the chart
+              showChartValuesInPercentage: true,
+              showChartValues: true,
+              showChartValuesOutside: false,
+              chartValueBackgroundColor: Colors.grey[200],
+              showLegends: true,
+              legendPosition:
+                  LegendPosition.right, //can be changed to top, left, bottom
+              decimalPlaces: 1,
+              showChartValueLabel: true,
+              initialAngle: 0,
+              chartValueStyle: defaultChartValueStyle.copyWith(
+                color: Colors.blueGrey[900].withOpacity(0.9),
+              ),
+              chartType: ChartType.disc, //can be changed to ChartType.ring
+            ) : SizedBox(
+              height: 150,
+            ),
+            SizedBox(
+              height: 50,
+            ),
+            RaisedButton(
+              color: Colors.blue,
+              child: Text('${buttonText}', style: TextStyle(
+                color: Colors.white
+              ),),
+              onPressed: () {
+                setState(() {
+                  _loadChart = !_loadChart;
+                  buttonText = _loadChart == false ? "Click to Show Chart" : "Click to Hide Chart";
+                });
+              },
             ),
             // Padding(
             //   padding: EdgeInsets.only(left: 15.0),

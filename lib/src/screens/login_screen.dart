@@ -143,7 +143,7 @@ class LoginScreen extends StatelessWidget {
     return RaisedButton(
         child: Text('Signup'),
         color: Colors.blue ,
-        onPressed: () => Navigator.pushNamed(context, '/test'),       
+        onPressed: () => Navigator.pushNamed(context, '/signup'),       
       );
 }
 }

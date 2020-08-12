@@ -5,12 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
 
-class AttendOptions extends StatefulWidget {
+class AttendByFingerPrint extends StatefulWidget {
   @override
-  _AttendOptionsState createState() => _AttendOptionsState();
+  _AttendByFingerPrintState createState() => _AttendByFingerPrintState();
 }
 
-class _AttendOptionsState extends State<AttendOptions> {
+class _AttendByFingerPrintState extends State<AttendByFingerPrint> {
   final LocalAuthentication auth = LocalAuthentication();
   bool _canCheckBiometrics;
   List<BiometricType> _availableBiometrics;

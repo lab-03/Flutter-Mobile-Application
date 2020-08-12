@@ -3,6 +3,9 @@ import 'dart:typed_data';
 // import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'scan.dart';
 
 class PreviewImageScreen extends StatefulWidget {
   final String imagePath;
@@ -36,7 +39,16 @@ class _PreviewImageScreenState extends State<PreviewImageScreen> {
                 child: FlatButton(
                   padding: EdgeInsets.all(15.0),
                   onPressed: () async {
-                    Navigator.pushNamed(context, '/scanQr');
+                    print("PREVIEW: ${widget.imagePath}");
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    await prefs.setString("imagePath", widget.imagePath);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ScanPage(),
+                      ),
+                    );
+                    Navigator.pushNamed(context, '/scanQr');//(imagePath: path)
                   },
                   child: Text(
                     "Scan",

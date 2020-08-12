@@ -196,6 +196,7 @@ class _CameraScreenState extends State {
       await controller.takePicture(path);
 
       // If the picture was taken, display it on a new screen
+      controller.dispose();
       Navigator.push(
         context,
         MaterialPageRoute(

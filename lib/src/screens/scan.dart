@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mime/mime.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class ScanPage extends StatefulWidget {
@@ -19,7 +24,7 @@ class _ScanPageState extends State<ScanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Scanner"),
+        title: Text("Scannar"),
         centerTitle: true,
       ),
       body: Container(
@@ -70,8 +75,8 @@ class _ScanPageState extends State<ScanPage> {
                 }
                 var currentData = new DateTime.now();
                 var location = new Location();
-                String longitude = "";
                 String latitude = "";
+                String longitude = "";
                 try {
                   await location.getLocation().then((onValue) {
                     print(onValue.latitude.toString() + "," + onValue.longitude.toString());
@@ -86,31 +91,93 @@ class _ScanPageState extends State<ScanPage> {
                   }
                 } 
                 print(currentData);
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String headers = prefs.get("signin_headers");
+                String imagePath = prefs.get("imagePath");
+                var jsonHeaders = json.decode(headers);
                 // Map data = {
                 //   "hash": "46fa1be6379a8b03629551ce9ec74664f79edece",
                 //   "longitude": "31.329484800000003",
                 //   "latitude": "29.8549248",
                 // };
-                Map data = {
-                  "hash": qrHash, // "6ebd4446e59a02f5b57c96a600e8ecb3c2281ead"
-                  "longitude": "${longitude}",// "10.807222"
-                  "latitude": "${latitude}", // "-90.984722"
-                  //"date": currentData.toString()
-                };
-                print(data);
+                Map data;
                 var jsonResponse = null;
-                var response = await http.post("https://gp-qrcode.herokuapp.com/api/qrcodes/attend", body: data);
+                var response;
+                print("IMAGE-PATH: ${imagePath}");
+                if (imagePath == null) {
+                  print("WITHOUT IMAGE");
+                  data = {
+                    "lat": "${latitude}", // "-90.984722"
+                    "long": "${longitude}",// "10.807222"
+                  };
+                  jsonResponse = null;
+                  response = await http.post("https://a-tracker.herokuapp.com/sessions/${qrHash}/attend",//
+                    body: data, 
+                    headers: {
+                      "access-token" :jsonHeaders["access-token"],
+                      "client": jsonHeaders["client"],
+                      "uid" : jsonHeaders["uid"]
+                    }
+                  );
+                } else {
+                  print("USING FACE");
+                  Map<String, String> headers = {
+                      "access-token" :jsonHeaders["access-token"],
+                      "client": jsonHeaders["client"],
+                      "uid" : jsonHeaders["uid"]
+                  };
+                  print("Headers: ${headers}");
+                  Uri apiUrl = Uri.parse('https://a-tracker.herokuapp.com/sessions/${qrHash}/attend');
+                  final mimeTypeData =
+                      lookupMimeType(imagePath, headerBytes: [0xFF, 0xD8]).split('/');
 
+                  // Intilize the multipart request
+                  final imageUploadRequest = http.MultipartRequest('POST', apiUrl);
+                  imageUploadRequest.headers.addAll(headers);
+                  print("MultiPartRequest: ${imageUploadRequest}");
+                  print("MultiPartRequest Headers: ${imageUploadRequest.headers}");
+                  // Attach the file in the request
+                  final file = await http.MultipartFile.fromPath(
+                      'captured_face', imagePath,
+                      contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+
+                  imageUploadRequest.files.add(file);
+                  imageUploadRequest.fields['lat'] = latitude;
+                  imageUploadRequest.fields['long'] = longitude;
+
+                  try {
+                    final streamedResponse = await imageUploadRequest.send();
+                    response = await http.Response.fromStream(streamedResponse);
+                  } catch (e) {
+                    print(e);
+                    return null;
+                  }
+
+                }
+                
+                print("headerFromScan:acTOk ${jsonHeaders["access-token"]}");
+                print("headerFromScan:Client ${jsonHeaders["client"]}");
+                print("headerFromScan:UID ${jsonHeaders["uid"]}");//https://gp-qrcode.herokuapp.com/api/qrcodes/attend
+
+                print("status: ${response.statusCode}");
                 if(response.statusCode == 200) {
+                  print("QR CODE KDA TMMMMM");
                   jsonResponse = json.decode(response.body);
-                  if (jsonResponse['status'] == "success") {
-                    showAlertDialog(context, jsonResponse['message']); 
-                  }                
+                  print("statusVVV: ${jsonResponse['verified']}");
+                  if (jsonResponse['verified'] == true) {
+                    setState(() => this.qrCodeResult = "Success");
+                    print("SUCCESS");
+                    showAlertDialog(context, "You attend successfully"); 
+                  } else {
+                    setState(() => this.qrCodeResult = jsonResponse['failure_message']);
+                  }    
                 } else {
                   print('Wrong Hash code');
                   print('status: ${response.statusCode}');
+                  // print('message: ${response.message}');
                   setState(() => this.qrCodeResult = 'Wrong Hash code');
                 }
+                prefs.remove("imagePath");
               },
               child: Text(
                 "Open Scanner",
