@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "849548019839",
+    "firebase_url": "https://attendance-app-9a427.firebaseio.com",
+    "project_id": "attendance-app-9a427",
+    "storage_bucket": "attendance-app-9a427.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849548019839:android:ef3172aca21b045f09174a",
+        "android_client_info": {
+          "package_name": "com.FCAI.Biometric_Attendance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "849548019839-vse9n49bi4n87h2c1vu38etql0mhlajs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc89Hf2hpupWz8px2W_BwH3vpWmy2KUok"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "849548019839-vse9n49bi4n87h2c1vu38etql0mhlajs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

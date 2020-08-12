@@ -1,0 +1,31 @@
+print("USING FACE");
+                  Map<String, String> headers = {
+                      "access-token" :jsonHeaders["access-token"],
+                      "client": jsonHeaders["client"],
+                      "uid" : jsonHeaders["uid"]
+                  };
+                  print("Headers: ${headers}");
+                  Uri apiUrl = Uri.parse('https://a-tracker.herokuapp.com/sessions/${qrHash}/attend');
+                  final mimeTypeData =
+                      lookupMimeType(imagePath, headerBytes: [0xFF, 0xD8]).split('/');
+
+                  // Intilize the multipart request
+                  final imageUploadRequest = http.MultipartRequest('POST', apiUrl);
+                  imageUploadRequest.headers.addAll(headers);
+                  print("MultiPartRequest: ${imageUploadRequest}");
+                  // Attach the file in the request
+                  final file = await http.MultipartFile.fromPath(
+                      'captured_face', imagePath,
+                      contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+
+                  imageUploadRequest.files.add(file);
+                  imageUploadRequest.fields['lat'] = latitude;
+                  imageUploadRequest.fields['long'] = longitude;
+
+                  try {
+                    final streamedResponse = await imageUploadRequest.send();
+                    response = await http.Response.fromStream(streamedResponse);
+                  } catch (e) {
+                    print(e);
+                    return null;
+                  }
