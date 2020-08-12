@@ -16,4 +16,4 @@ samples, guidance on mobile development, and a full API reference.
 
 
 ## Screenshots From The App(v3)
-
+![Demo GIF](screenshots/flutterAppGIF.2.gif)
