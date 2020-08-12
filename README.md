@@ -15,12 +15,5 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 
-## Screenshots From The App(v1)
-# Login Screen
-![](screenshots/loginScreen.png)
+## Screenshots From The App(v3)
 
-# Home Screen
-![](screenshots/HomeScreen.png)
-
-# QRCode Screen
-![](screenshots/QR-codeScreen.png)
