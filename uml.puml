@@ -1,0 +1,456 @@
+@startuml
+set namespaceSeparator ::
+
+class "login_bloc::src::app.dart::App" {
+  +Widget build()
+  +dynamic createContent()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "login_bloc::src::app.dart::App"
+
+class "login_bloc::src::blocs::authorization_bloc.dart::AuthorizationBloc" {
+  -String _tokenString
+  -PublishSubject _isSessionValid
+  +dynamic isSessionValid
+  +void dispose()
+  +void restoreSession()
+  +void openSession()
+  +void closeSession()
+}
+
+"login_bloc::src::blocs::authorization_bloc.dart::AuthorizationBloc" o-- "rxdart::src::subjects::publish_subject.dart::PublishSubject"
+
+class "login_bloc::src::blocs::bloc.dart::Bloc" {
+  -BehaviorSubject<String> _nameController
+  -BehaviorSubject<String> _imageController
+  -BehaviorSubject<String> _emailController
+  -BehaviorSubject<String> _passwordController
+  +dynamic name
+  +dynamic image
+  +dynamic email
+  +dynamic password
+  +dynamic submitLoginValid
+  +dynamic submitSignupValid
+  +dynamic Function(String) changeName
+  +dynamic Function(String) changeImage
+  +dynamic Function(String) changeEmail
+  +dynamic Function(String) changePassword
+  +dynamic submitLogin()
+  +dynamic submitSignup()
+  +dynamic returnToLogin()
+  +dynamic dispose()
+}
+
+"login_bloc::src::blocs::bloc.dart::Bloc" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<String>"
+"login_bloc::src::blocs::bloc.dart::Bloc" o-- "login_bloc::src::blocs::bloc.dart::dynamic Function(String)"
+"login_bloc::src::blocs::validators.dart::Validators" <|-- "login_bloc::src::blocs::bloc.dart::Bloc"
+
+class "login_bloc::src::blocs::home_bloc.dart::HomeBloc" {
+  +dynamic logoutUser()
+}
+
+class "login_bloc::src::blocs::login_bloc.dart::LoginBloc" {
+  +Repository repository
+  -BehaviorSubject _emailController
+  -BehaviorSubject _passwordController
+  -PublishSubject _loadingData
+  -PublishSubject _errorController
+  +dynamic Function(String) changeEmail
+  +dynamic Function(String) changePassword
+  +dynamic email
+  +dynamic password
+  +dynamic submitValid
+  +dynamic loading
+  +dynamic error
+  +void submit()
+  +dynamic login()
+  +void dispose()
+}
+
+"login_bloc::src::blocs::login_bloc.dart::LoginBloc" o-- "login_bloc::src::resources::repository.dart::Repository"
+"login_bloc::src::blocs::login_bloc.dart::LoginBloc" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject"
+"login_bloc::src::blocs::login_bloc.dart::LoginBloc" o-- "rxdart::src::subjects::publish_subject.dart::PublishSubject"
+"login_bloc::src::blocs::login_bloc.dart::LoginBloc" o-- "login_bloc::src::blocs::login_bloc.dart::dynamic Function(String)"
+"login_bloc::src::blocs::validators.dart::Validators" <|-- "login_bloc::src::blocs::login_bloc.dart::LoginBloc"
+
+class "login_bloc::src::blocs::signup_bloc.dart::SignupBloc" {
+  +Repository repository
+  -BehaviorSubject _nameController
+  -BehaviorSubject _imageController
+  -BehaviorSubject _emailController
+  -BehaviorSubject _passwordController
+  -PublishSubject _loadingData
+  +dynamic Function(String) changeName
+  +dynamic Function(String) changeEmail
+  +dynamic Function(String) changePassword
+  +dynamic name
+  +dynamic email
+  +dynamic password
+  +dynamic submitValid
+  +dynamic loading
+  +void submit()
+  +dynamic signup()
+  +void dispose()
+}
+
+"login_bloc::src::blocs::signup_bloc.dart::SignupBloc" o-- "login_bloc::src::resources::repository.dart::Repository"
+"login_bloc::src::blocs::signup_bloc.dart::SignupBloc" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject"
+"login_bloc::src::blocs::signup_bloc.dart::SignupBloc" o-- "rxdart::src::subjects::publish_subject.dart::PublishSubject"
+"login_bloc::src::blocs::signup_bloc.dart::SignupBloc" o-- "login_bloc::src::blocs::signup_bloc.dart::dynamic Function(String)"
+"login_bloc::src::blocs::validators.dart::Validators" <|-- "login_bloc::src::blocs::signup_bloc.dart::SignupBloc"
+
+class "login_bloc::src::blocs::validators.dart::Validators" {
+  +StreamTransformer<String, String> validateName
+  +StreamTransformer<String, String> validateImage
+  +StreamTransformer<String, String> validateEmail
+  +StreamTransformer<String, String> validatePassword
+}
+
+"login_bloc::src::blocs::validators.dart::Validators" o-- "dart::async::StreamTransformer<String, String>"
+
+class "login_bloc::src::models::imageCapture_model.dart::Test" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "login_bloc::src::models::imageCapture_model.dart::Test"
+
+class "login_bloc::src::models::imageCapture_model.dart::ImageCapture" {
+  +State createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::models::imageCapture_model.dart::ImageCapture"
+
+class "login_bloc::src::models::imageCapture_model.dart::_ImageCaptureState" {
+  -File _imageFile
+  -Future _pickImage()
+  -Future _cropImage()
+  -void _clear()
+  +Widget build()
+  +Widget nameField()
+  +Widget imageField()
+  +Widget emailField()
+  +Widget passwordField()
+  +Widget submitSignupButton()
+  +Widget loginButton()
+}
+
+"login_bloc::src::models::imageCapture_model.dart::_ImageCaptureState" o-- "dart::io::File"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::models::imageCapture_model.dart::_ImageCaptureState"
+
+class "login_bloc::src::models::post_model.dart::Post" {
+  +String userId
+  +int id
+  +String title
+  +String body
+  +Map toMap()
+}
+
+class "login_bloc::src::resources::auth_provider.dart::AuthProvider" {
+  +Future login()
+  +Future signup()
+}
+
+class "login_bloc::src::resources::repository.dart::Repository" {
+  +AuthProvider authProvider
+  +Future login()
+  +Future signup()
+}
+
+"login_bloc::src::resources::repository.dart::Repository" o-- "login_bloc::src::resources::auth_provider.dart::AuthProvider"
+
+class "login_bloc::src::screens::attend_by_fingerprint.dart::AttendByFingerPrint" {
+  +_AttendByFingerPrintState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::attend_by_fingerprint.dart::AttendByFingerPrint"
+
+class "login_bloc::src::screens::attend_by_fingerprint.dart::_AttendByFingerPrintState" {
+  +LocalAuthentication auth
+  -bool _canCheckBiometrics
+  -List<BiometricType> _availableBiometrics
+  -String _authorized
+  -bool _isAuthenticating
+  -Future _checkBiometrics()
+  -Future _getAvailableBiometrics()
+  -Future _authenticate()
+  -void _cancelAuthentication()
+  +Widget build()
+}
+
+"login_bloc::src::screens::attend_by_fingerprint.dart::_AttendByFingerPrintState" o-- "local_auth::local_auth.dart::LocalAuthentication"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::attend_by_fingerprint.dart::_AttendByFingerPrintState"
+
+class "login_bloc::src::screens::attend_screen.dart::Attend" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "login_bloc::src::screens::attend_screen.dart::Attend"
+
+class "login_bloc::src::screens::camera_screen.dart::CameraScreen" {
+  +_CameraScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::camera_screen.dart::CameraScreen"
+
+class "login_bloc::src::screens::camera_screen.dart::_CameraScreenState" {
+  +CameraController controller
+  +List cameras
+  +int selectedCameraIdx
+  +String imagePath
+  +void initState()
+  -Future _initCameraController()
+  +Widget build()
+  -Widget _cameraPreviewWidget()
+  -Widget _captureControlRowWidget()
+  -Widget _cameraTogglesRowWidget()
+  -IconData _getCameraLensIcon()
+  -void _onSwitchCamera()
+  -void _onCapturePressed()
+  -void _showCameraException()
+}
+
+"login_bloc::src::screens::camera_screen.dart::_CameraScreenState" o-- "camera::camera.dart::CameraController"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::camera_screen.dart::_CameraScreenState"
+
+class "login_bloc::src::screens::firebase.dart::MessageHandlerFire" {
+  +State createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::firebase.dart::MessageHandlerFire"
+
+class "login_bloc::src::screens::firebase.dart::_MessageHandlerState" {
+  -Firestore _db
+  -FirebaseMessaging _fcm
+  -String _token
+  +void initState()
+  +Widget build()
+  -dynamic _saveDeviceToken()
+}
+
+"login_bloc::src::screens::firebase.dart::_MessageHandlerState" o-- "cloud_firestore::cloud_firestore.dart::Firestore"
+"login_bloc::src::screens::firebase.dart::_MessageHandlerState" o-- "firebase_messaging::firebase_messaging.dart::FirebaseMessaging"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::firebase.dart::_MessageHandlerState"
+
+class "login_bloc::src::screens::imageUpload.dart::UserInfoEdit" {
+  +_UserInfoEditState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::imageUpload.dart::UserInfoEdit"
+
+class "login_bloc::src::screens::imageUpload.dart::_UserInfoEditState" {
+  +ProgressDialog pr
+  -String _name
+  -String _password
+  -String _email
+  -File _image
+  +TextEditingController name
+  +TextEditingController email
+  +TextEditingController password
+  +String img
+  -GlobalKey<FormState> _formKey
+  +Uri apiUrl
+  +Widget build()
+  -void _onAlertPress()
+  +Future getCameraImage()
+  +Future getGalleryImage()
+  -Future _uploadImage()
+  -void _startUploading()
+  -void _resetState()
+  +dynamic messageAllert()
+}
+
+"login_bloc::src::screens::imageUpload.dart::_UserInfoEditState" o-- "progress_dialog::progress_dialog.dart::ProgressDialog"
+"login_bloc::src::screens::imageUpload.dart::_UserInfoEditState" o-- "dart::io::File"
+"login_bloc::src::screens::imageUpload.dart::_UserInfoEditState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"login_bloc::src::screens::imageUpload.dart::_UserInfoEditState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::imageUpload.dart::_UserInfoEditState"
+
+class "login_bloc::src::screens::login_screen.dart::LoginScreen" {
+  +LoginBloc bloc
+  +Widget build()
+  +Widget loadingIndicator()
+  +Widget errorMessage()
+  +Widget emailField()
+  +Widget passwordField()
+  +Widget submitButton()
+  +Widget signupButton()
+}
+
+"login_bloc::src::screens::login_screen.dart::LoginScreen" o-- "login_bloc::src::blocs::login_bloc.dart::LoginBloc"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "login_bloc::src::screens::login_screen.dart::LoginScreen"
+
+class "login_bloc::src::screens::main_screen.dart::MainScreen" {
+  +_MainScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::main_screen.dart::MainScreen"
+
+class "login_bloc::src::screens::main_screen.dart::_MainScreenState" {
+  -int _currentIndex
+  -PageController _pageController
+  -FirebaseMessaging _fcm
+  -dynamic _pages
+  -String _token
+  +HomeBloc bloc
+  +void initState()
+  +dynamic gerSharedPref()
+  +Widget build()
+  -dynamic _getDeviceToken()
+  +Widget buildImages()
+  +Widget buildInfoDetail()
+}
+
+"login_bloc::src::screens::main_screen.dart::_MainScreenState" o-- "flutter::src::widgets::page_view.dart::PageController"
+"login_bloc::src::screens::main_screen.dart::_MainScreenState" o-- "firebase_messaging::firebase_messaging.dart::FirebaseMessaging"
+"login_bloc::src::screens::main_screen.dart::_MainScreenState" o-- "login_bloc::src::blocs::home_bloc.dart::HomeBloc"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::main_screen.dart::_MainScreenState"
+
+class "login_bloc::src::screens::participation_screen.dart::Participate" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "login_bloc::src::screens::participation_screen.dart::Participate"
+
+class "login_bloc::src::screens::preview_screen.dart::PreviewImageScreen" {
+  +String imagePath
+  +_PreviewImageScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::preview_screen.dart::PreviewImageScreen"
+
+class "login_bloc::src::screens::preview_screen.dart::_PreviewImageScreenState" {
+  +Widget build()
+  +Future getBytesFromFile()
+}
+
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::preview_screen.dart::_PreviewImageScreenState"
+
+class "login_bloc::src::screens::profile_screen.dart::ProfleScreen" {
+  +_ProfleScreenState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::profile_screen.dart::ProfleScreen"
+
+class "login_bloc::src::screens::profile_screen.dart::_ProfleScreenState" {
+  +Map<String, double> data
+  -bool _loadChart
+  +String buttonText
+  +dynamic res
+  -List<Color> _colors
+  +void initState()
+  +dynamic getSharedPref()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::profile_screen.dart::_ProfleScreenState"
+
+class "login_bloc::src::screens::questions_screen.dart::Questions" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "login_bloc::src::screens::questions_screen.dart::Questions"
+
+class "login_bloc::src::screens::scan.dart::ScanPage" {
+  +_ScanPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::scan.dart::ScanPage"
+
+class "login_bloc::src::screens::scan.dart::_ScanPageState" {
+  +String qrCodeResult
+  +String qrHash
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::scan.dart::_ScanPageState"
+
+class "login_bloc::src::screens::scanPrev.dart::QR" {
+  +_QRState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::scanPrev.dart::QR"
+
+class "login_bloc::src::screens::scanPrev.dart::_QRState" {
+  +Widget build()
+  +Widget flatButton()
+}
+
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::scanPrev.dart::_QRState"
+
+class "login_bloc::src::screens::signup_screen.dart::SignupScreen" {
+  +State createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::signup_screen.dart::SignupScreen"
+
+class "login_bloc::src::screens::signup_screen.dart::_SignupScreenState" {
+  +ProgressDialog pr
+  -String _name
+  -String _password
+  -String _email
+  -File _image
+  +TextEditingController name
+  +TextEditingController email
+  +TextEditingController password
+  +String img
+  -GlobalKey<FormState> _formKey
+  +Uri apiUrl
+  +Widget build()
+  +Widget imageField()
+  +Widget nameField()
+  +Widget emailField()
+  +Widget passwordField()
+  +Widget submitButton()
+  +Widget loginButton()
+  -void _onAlertPress()
+  +Future getCameraImage()
+  +Future getGalleryImage()
+  -Future _uploadImage()
+  -void _startUploading()
+  -void _resetState()
+  +dynamic messageAllert()
+}
+
+"login_bloc::src::screens::signup_screen.dart::_SignupScreenState" o-- "progress_dialog::progress_dialog.dart::ProgressDialog"
+"login_bloc::src::screens::signup_screen.dart::_SignupScreenState" o-- "dart::io::File"
+"login_bloc::src::screens::signup_screen.dart::_SignupScreenState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"login_bloc::src::screens::signup_screen.dart::_SignupScreenState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::signup_screen.dart::_SignupScreenState"
+
+class "login_bloc::src::screens::signup_screen_o.dart::UserInfoEdit" {
+  +_UserInfoEditState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "login_bloc::src::screens::signup_screen_o.dart::UserInfoEdit"
+
+class "login_bloc::src::screens::signup_screen_o.dart::_UserInfoEditState" {
+  +ProgressDialog pr
+  -String _name
+  -String _password
+  -String _email
+  -File _image
+  +TextEditingController name
+  +TextEditingController email
+  +TextEditingController password
+  +String img
+  -GlobalKey<FormState> _formKey
+  +Uri apiUrl
+  +Widget build()
+  +Widget loginButton()
+  -void _onAlertPress()
+  +Future getCameraImage()
+  +Future getGalleryImage()
+  -Future _uploadImage()
+  -void _startUploading()
+  -void _resetState()
+  +dynamic messageAllert()
+}
+
+"login_bloc::src::screens::signup_screen_o.dart::_UserInfoEditState" o-- "progress_dialog::progress_dialog.dart::ProgressDialog"
+"login_bloc::src::screens::signup_screen_o.dart::_UserInfoEditState" o-- "dart::io::File"
+"login_bloc::src::screens::signup_screen_o.dart::_UserInfoEditState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"login_bloc::src::screens::signup_screen_o.dart::_UserInfoEditState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"flutter::src::widgets::framework.dart::State<T>" <|-- "login_bloc::src::screens::signup_screen_o.dart::_UserInfoEditState"
+
+
+@enduml

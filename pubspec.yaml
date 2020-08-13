@@ -28,10 +28,10 @@ dependencies:
   rxdart: ^0.23.1
   http: ^0.12.0+4
   image_cropper: ^1.2.1
-  image_picker: ^0.6.6+1
+  image_picker: ^0.6.7+4
   shared_preferences: ^0.5.7+2
   observable: ^0.22.2
-  camera: ^0.5.8+2
+  camera: ^0.5.8+4
   path_provider: ^1.6.10
   path: ^1.6.4
   location: ^3.0.2

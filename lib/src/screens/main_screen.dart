@@ -81,7 +81,7 @@ class _MainScreenState extends State<MainScreen> {
         elevation: 0.0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          color: Colors.black,
+          color: Colors.red,
           onPressed: bloc.logoutUser,//Navigator.of(context).pop();
         ),
         actions: <Widget>[
@@ -91,6 +91,12 @@ class _MainScreenState extends State<MainScreen> {
             onPressed: (){},
           )
         ],
+        title: Text("Biometric Attendance",
+          style: TextStyle(
+            color: Colors.blue,
+          ),  
+        ),
+        centerTitle: true,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

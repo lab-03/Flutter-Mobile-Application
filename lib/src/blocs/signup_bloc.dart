@@ -96,7 +96,7 @@ class SignupBloc extends Validators {
     String token = await repository.signup(name, image, email, password);
     print(token);
     _loadingData.sink.add(false);
-    authBloc.openSession(token, "anything", "anything");
+    //authBloc.openSession(token, "anything", "anything");
     print('gell');
   }
 

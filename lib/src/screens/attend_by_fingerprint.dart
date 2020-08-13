@@ -60,7 +60,7 @@ class _AttendByFingerPrintState extends State<AttendByFingerPrint> {
         _isAuthenticating = false;
         _authorized = 'Authenticating';
       });
-      Navigator.pushNamed(context, '/scanQr');
+      if (authenticated == true) Navigator.pushNamed(context, '/scanQr');
     } on PlatformException catch (e) {
       print(e);
       setState(() {

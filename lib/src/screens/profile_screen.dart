@@ -15,11 +15,14 @@ class _ProfleScreenState extends State<ProfleScreen> {
   Map<String, double> data = new Map();
   bool _loadChart = false;
   String buttonText = "Click to Show Chart";
+  String studentName = "";
+
   var res;
   
   @override
   void initState() {
     res = getSharedPref();
+    
     data.addAll({
       'ATTENDED': 35,
       'ABSENCE': 7,
@@ -36,7 +39,12 @@ class _ProfleScreenState extends State<ProfleScreen> {
   String headers = prefs.get("signin_headers");
   var jsonHeaders = json.decode(headers);
   var jsonRes = json.decode(res);
-  print(jsonRes);
+  print("Profile-REs: ${jsonRes["data"]}");
+  print("Profile-HEs: ${jsonHeaders}");
+  setState(() {
+    studentName = jsonRes["data"]["first_name"];
+  });
+  print("Student Name: ${studentName}");
 
   return jsonRes;
   
@@ -169,18 +177,23 @@ class _ProfleScreenState extends State<ProfleScreen> {
             SizedBox(
               height: 50,
             ),
-            RaisedButton(
-              color: Colors.blue,
-              child: Text('${buttonText}', style: TextStyle(
-                color: Colors.white
-              ),),
+            FlatButton(
+              padding: EdgeInsets.all(15.0),
               onPressed: () {
                 setState(() {
                   _loadChart = !_loadChart;
                   buttonText = _loadChart == false ? "Click to Show Chart" : "Click to Hide Chart";
                 });
               },
+              child: Text(
+                '${buttonText}',
+                style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),
+              ),
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.blue,width: 3.0),
+                  borderRadius: BorderRadius.circular(20.0)),
             ),
+            
             // Padding(
             //   padding: EdgeInsets.only(left: 15.0),
             //   child: Row(
@@ -194,10 +207,6 @@ class _ProfleScreenState extends State<ProfleScreen> {
             //     ],
             //   ),
             // ),
-            // buildImages(),
-            // buildInfoDetail(),
-            // buildImages(),
-            // buildInfoDetail(),
           ],
         )
       ],
